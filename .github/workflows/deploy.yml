@@ -1,0 +1,49 @@
+name: Deploy on push
+
+on:
+  push:
+    branches: [ "main" ]   # 需要自动部署的分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (optional)
+        uses: actions/checkout@v4
+
+      - name: SSH to server and deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 60.205.91.232
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+
+            WORKDIR="/var/lib/docker/volumes/npm_npm-data/_data/milkmangotea.top"
+
+            # 避免 "unsafe repository" 警告（当属主不同或挂载在 docker 卷）
+            git config --global --add safe.directory "$WORKDIR" || true
+
+            cd "$WORKDIR"
+
+            # 确保仓库在 main 且干净更新（强一致）
+            git fetch --all
+            git checkout -f main || true
+            git reset --hard origin/main
+            git clean -fd
+
+            # 如有子模块
+            git submodule update --init --recursive || true
+
+            # === 可选：构建步骤（静态站点需构建时再开启）===
+            # npm ci
+            # npm run build
+
+            # === 可选：如需重启你的前端服务/SSR容器 ===
+            # docker compose -f /path/to/compose.yml restart your_app
+            # 或者 pm2 reload your-app
+
+            # === 可选：权限修复（视情况开启；会略耗时）===
+            # chown -R 1000:1000 "$WORKDIR"
+
