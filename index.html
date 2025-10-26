@@ -12,6 +12,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://milkmangotea.top/" />
     <meta property="og:image" content="https://milkmangotea.top/images/og-card.png" />
+    <!-- Favicons -->
+    <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+    <link rel="icon" href="/images/favicon-32x32.png?v=2" sizes="32x32">
     <!-- JSON-LD: Person -->
     <script type="application/ld+json">
         {
@@ -141,6 +144,32 @@
         @media (prefers-reduced-motion: reduce){
             .aurora, .illust{ animation: none !important }
         }
+
+        /* === 新增：将立绘固定到右下角（随滚动固定） === */
+        /* 隐藏原英雄位的立绘图片（结构不变，仅不显示） */
+        .hero .illust{ display:none; }
+
+        /* 浮动立绘：固定在右下角，缩小并轻微下压避免“腿悬空” */
+        .floating-illust{
+            position: fixed;
+            right: max(14px, 2.2vw);
+            bottom: -10px;                 /* 向下压一点，让脚贴近视口底缘 */
+            width: clamp(160px, 22vw, 320px); /* 之前偏大，整体缩小 */
+            z-index: 4;                     /* 高于容器与雪花层 */
+            pointer-events: none;           /* 不遮挡点击 */
+            transform: translateZ(0);
+            filter: drop-shadow(0 20px 40px rgba(56,189,248,.22)) drop-shadow(0 8px 22px rgba(2,8,23,.7));
+            animation: breathe 6.5s ease-in-out infinite;
+        }
+        @media (max-width: 900px){
+            .floating-illust{ width: clamp(140px, 30vw, 260px); bottom: -8px; }
+        }
+        @media (max-width: 640px){
+            .floating-illust{ width: clamp(120px, 36vw, 220px); bottom: -6px; right: max(10px, 3vw); }
+        }
+        @media (prefers-reduced-motion: reduce){
+            .floating-illust{ animation: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -169,11 +198,10 @@
             <p class="subtitle">这个主页主要是存放链接和好看的</p>
             <div class="cta">
                 <a class="btn" href="#links">开始探索</a>
-                <!-- CTA2（OpenWebUI）按你的要求移除 -->
             </div>
         </div>
         <div class="illust-wrap">
-            <img class="illust" src="/assets/anime.png" alt="你的二次元形象或插画" />
+            <img class="illust" src="/images/anime.png" alt="你的二次元形象或插画" />
             <div class="frost" aria-hidden="true"></div>
         </div>
     </section>
@@ -221,6 +249,9 @@
         <p>© <span id="y"></span> MilkMangoTea</p>
     </footer>
 </div>
+
+<!-- 固定在右下角的立绘，文件放在 /images 下 -->
+<img class="floating-illust" src="/images/anime.webp" alt="装饰立绘" aria-hidden="true" />
 
 <script>
     // ==== 背景随鼠标移动的光斑 + 立绘视差（无可见光标圈） ====
