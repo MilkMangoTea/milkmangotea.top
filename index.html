@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>你的名字 — 个人主页</title>
+    <meta name="description" content="你的名字的个人主页：简介、项目与常用链接。" />
+    <meta name="theme-color" content="#0b1220" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="你的名字 — 个人主页" />
+    <meta property="og:description" content="简介、项目与常用链接。" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourdomain.com/" />
+    <meta property="og:image" content="https://yourdomain.com/og-card.png" />
+    <!-- JSON-LD: Person -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "你的名字",
+            "url": "https://yourdomain.com/",
+            "image": "https://yourdomain.com/avatar.jpg",
+            "sameAs": [
+                "https://github.com/yourname",
+                "https://www.linkedin.com/in/yourname"
+            ],
+            "jobTitle": "你的头衔"
+        }
+    </script>
+    <style>
+        /* ====== Design Tokens (冷色调 / 深色) ====== */
+        :root{
+            --bg: #0b1220;            /* 深黑蓝 */
+            --panel: rgba(12,16,30,.55);  /* 玻璃态 */
+            --border: rgba(172,195,255,.16);
+            --text: #eaf5ff;          /* 近白 */
+            --muted: #9db3c7;         /* 次级文字 */
+            --acc: #7dd3fc;           /* 冰蓝 */
+            --acc-2: #c7d2fe;         /* 冷紫 */
+            --ring: rgba(125,211,252,.25);
+            --shadow: 0 20px 60px rgba(2,8,23,.6);
+            --mx: 70%; --my: 20%;     /* 动态背景坐标 */
+        }
+        @media (prefers-color-scheme: light){
+            :root{ --bg:#f8fbff; --panel:rgba(255,255,255,.7); --border:rgba(46,78,120,.15); --text:#0b1220; --muted:#4e6375; --ring:rgba(56,189,248,.35);}
+        }
+        *{ box-sizing:border-box }
+        html{
+            height:100%;
+            background: var(--bg);
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
+        body{
+            margin:0; color:var(--text);
+            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            position: relative; /* 统一堆叠上下文，视口级背景不露白 */
+            /* 分层渐变 + 鼠标响应光斑 */
+            background:
+                    radial-gradient(800px 600px at var(--mx) var(--my), rgba(125,211,252,.18), transparent 60%),
+                    radial-gradient(1000px 700px at 10% 90%, rgba(199,210,254,.12), transparent 70%),
+                    linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+            overflow-x:hidden;
+            min-height:100%;
+            overscroll-behavior: none;
+            overscroll-behavior-y: none;
+        }
+        /* 细腻噪点/星点层（冷色调） */
+        body::before{
+            content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+            background-image: radial-gradient(rgba(165,243,252,.06) 1px, transparent 1px);
+            background-size: 40px 40px; mix-blend-mode: screen; opacity:.7;
+        }
+        /* 流动极光层（增加慢速漂移） */
+        .aurora{ position:fixed; inset:-20% -10%; filter: blur(60px); z-index:1; opacity:.6; animation: floaty 26s ease-in-out infinite alternate; }
+        .aurora::before, .aurora::after{
+            content:""; position:absolute; inset:0; background:
+                conic-gradient(from 0deg at 30% 30%, rgba(56,189,248,.25), transparent 40%, rgba(199,210,254,.22) 60%, transparent 70%, rgba(56,189,248,.18));
+            animation: swirl 24s linear infinite;
+        }
+        .aurora::after{ transform: rotate(120deg); animation-duration: 36s; opacity:.9; }
+        @keyframes swirl{ to{ transform: rotate(360deg) } }
+        @keyframes floaty{
+            0%{ transform: translate3d(0,0,0) scale(1); }
+            100%{ transform: translate3d(2%, -1%, 0) scale(1.05); }
+        }
+
+        .container{ position:relative; z-index:3; max-width:1160px; margin:0 auto; padding:28px 20px 80px }
+
+        /* ====== Header ====== */
+        header{ display:flex; align-items:center; gap:18px; padding:14px 16px; border:1px solid var(--border); background:var(--panel); backdrop-filter: blur(12px) saturate(110%); border-radius:18px; box-shadow: var(--shadow); }
+        .brand{ display:flex; align-items:center; gap:12px }
+        .avatar{ width:44px; height:44px; border-radius:12px; border:1px solid var(--border); object-fit:cover; box-shadow:0 8px 24px rgba(2,8,23,.5) }
+        .name{ font-size:16px; font-weight:700 }
+        .tagline{ margin:0; color:var(--muted); font-size:12.5px }
+        .spacer{ flex:1 }
+        .top-links{ display:flex; gap:10px; flex-wrap:wrap }
+        .chip{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); color:inherit; text-decoration:none; font-size:13px }
+
+        /* ====== Hero ====== */
+        .hero{ display:grid; grid-template-columns: 1.1fr .9fr; gap:24px; margin-top:24px; align-items:center }
+        @media (max-width:900px){ .hero{ grid-template-columns: 1fr; } }
+
+        .title{ margin:0 0 14px; font-size: clamp(32px, 4.6vw, 68px); line-height:1.05; font-weight:800; letter-spacing: -0.02em; background: linear-gradient(180deg, #dbeafe 0%, #7dd3fc 30%, #eaf5ff 90%);
+            -webkit-background-clip:text; background-clip:text; color:transparent; text-shadow: 0 0 0 rgba(0,0,0,0); }
+        .subtitle{ margin:0 0 18px; font-size: clamp(14px, 1.4vw, 18px); color:var(--muted) }
+
+        .cta{ display:flex; gap:12px; flex-wrap:wrap }
+        .btn{ display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(125,211,252,.18), rgba(255,255,255,.02)); color:#081522; text-decoration:none; font-weight:700; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 10px 30px rgba(56,189,248,.25); }
+        .btn:hover{ transform: translateY(-1px); }
+        .btn.ghost{ background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); color:var(--text) }
+
+        .illust-wrap{ position:relative; display:flex; justify-content:center }
+        .illust{ width:min(520px, 86%); transform: translateZ(0); filter: drop-shadow(0 20px 40px rgba(56,189,248,.22)) drop-shadow(0 8px 22px rgba(2,8,23,.7)); transition: transform .2s ease; animation: breathe 6.5s ease-in-out infinite; }
+        @keyframes breathe{
+            0%,100%{ filter: drop-shadow(0 18px 36px rgba(56,189,248,.20)) drop-shadow(0 6px 18px rgba(2,8,23,.60)); }
+            50%{ filter: drop-shadow(0 26px 58px rgba(56,189,248,.34)) drop-shadow(0 12px 28px rgba(2,8,23,.72)); }
+        }
+        .frost{ position:absolute; inset:auto -6% -6% -6%; height:36%; background:radial-gradient(60% 80% at 50% 90%, rgba(125,211,252,.18), transparent 70%); filter: blur(30px); pointer-events:none }
+
+        /* ====== Panels & Cards ====== */
+        .section{ margin-top:26px }
+        .panel{ padding:18px; border:1px solid var(--border); background:var(--panel); backdrop-filter: blur(10px) saturate(120%); border-radius:20px; box-shadow: var(--shadow) }
+
+        .grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px }
+        @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,minmax(0,1fr)) } }
+        @media (max-width:640px){ .grid{ grid-template-columns:1fr } }
+
+        .card{ position:relative; padding:16px; border:1px solid var(--border); border-radius:16px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease }
+        .card:hover{ transform:translateY(-3px); box-shadow:0 20px 42px rgba(2,8,23,.65); border-color: var(--ring) }
+        .card a{ color:inherit; text-decoration:none; display:block }
+        .card h3{ margin:0 0 6px; font-size:16px; color:#e7f6ff }
+        .card p{ margin:0; color:var(--muted); font-size:13px }
+        .badges{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px }
+        .badge{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted); background:rgba(125,211,252,.06) }
+
+        footer{ margin-top:38px; color:var(--muted); font-size:12px; text-align:center }
+
+        /* 粒子雪花画布 */
+        .fx-snow{ position:fixed; inset:0; z-index:2; pointer-events:none; }
+
+        @media (prefers-reduced-motion: reduce){
+            .aurora, .illust{ animation: none !important }
+        }
+    </style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"></div>
+<canvas id="fx-snow" class="fx-snow" aria-hidden="true"></canvas>
+<div class="container">
+    <header>
+        <div class="brand">
+            <img class="avatar" src="/avatar.jpg" alt="你的头像" />
+            <div>
+                <div class="name">你的名字</div>
+                <p class="tagline">一句话自我介绍 / 职业 / 兴趣关键词</p>
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <nav class="top-links">
+            <a class="chip" href="mailto:you@yourdomain.com" rel="me">Email</a>
+            <a class="chip" href="https://github.com/yourname" target="_blank" rel="me noopener">GitHub</a>
+            <a class="chip" href="https://www.linkedin.com/in/yourname" target="_blank" rel="me noopener">LinkedIn</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1 class="title">冷色系 · 轻霓虹 · 二次元风的个人主页</h1>
+            <p class="subtitle">采用玻璃拟态 + 极光背景，背景将跟随你的鼠标产生动态高光与微妙的视差。你可以把右侧换成喜欢的立绘或二次元角色。</p>
+            <div class="cta">
+                <a class="btn" href="#links">开始探索</a>
+                <a class="btn ghost" href="https://openwebui.yourdomain.com/" target="_blank" rel="noopener">OpenWebUI</a>
+            </div>
+        </div>
+        <div class="illust-wrap">
+            <img class="illust" src="/assets/anime.png" alt="你的二次元形象或插画" />
+            <div class="frost" aria-hidden="true"></div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="panel">
+            <h2 style="margin:0 0 10px;font-size:18px">关于我</h2>
+            <p style="margin:0;color:var(--muted);font-size:14px">在这里写 3-4 句话介绍你是谁、在做什么、感兴趣的方向，以及你希望访客做什么（比如阅读 Blog、体验你搭建的工具等）。</p>
+        </div>
+    </section>
+
+    <section class="section" id="links">
+        <div class="panel">
+            <h2 style="margin:0 0 14px;font-size:18px">链接 / Apps</h2>
+            <div class="grid">
+                <div class="card">
+                    <a href="https://openwebui.yourdomain.com/" target="_blank" rel="noopener">
+                        <h3>OpenWebUI</h3>
+                        <p>你服务器上的对话界面入口。</p>
+                        <div class="badges">
+                            <span class="badge">登录保护</span>
+                            <span class="badge">HTTPS</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="/blog/">
+                        <h3>Blog / Notes</h3>
+                        <p>记录想法、工程笔记与项目复盘。</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="/projects/">
+                        <h3>Projects</h3>
+                        <p>精选项目集合与演示链接。</p>
+                    </a>
+                </div>
+                <div class="card">
+                    <a href="/resume.pdf" target="_blank" rel="noopener">
+                        <h3>Resume</h3>
+                        <p>一页式简历（PDF）。</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© <span id="y"></span> 你的名字 · <a href="/sitemap.xml" style="color:inherit">Sitemap</a></p>
+    </footer>
+</div>
+
+<script>
+    // ==== 背景随鼠标移动的光斑 + 立绘视差（无可见光标圈） ====
+    const root = document.documentElement;
+    const illust = document.querySelector('.illust');
+
+    const setPos = (x, y) => {
+        root.style.setProperty('--mx', x + 'px');
+        root.style.setProperty('--my', y + 'px');
+        // 轻微视差 (居中为基准)
+        const rx = (x / innerWidth - .5) * 8;  // rotate
+        const ty = (y / innerHeight - .5) * -8; // tilt
+        if (illust) illust.style.transform = `translateZ(0) rotateY(${rx}deg) rotateX(${ty}deg)`;
+    };
+
+    const onMove = (e) => {
+        const x = e.clientX ?? (e.touches && e.touches[0].clientX) ?? innerWidth*0.7;
+        const y = e.clientY ?? (e.touches && e.touches[0].clientY) ?? innerHeight*0.2;
+        setPos(x,y);
+    };
+
+    window.addEventListener('mousemove', onMove, {passive:true});
+    window.addEventListener('touchmove', onMove, {passive:true});
+
+    // 初始定位（中心偏右上）
+    setPos(innerWidth*0.7, innerHeight*0.2);
+
+    // 年份
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // ==== 轻量粒子雪花（尊重简化动效） ====
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canvas = document.getElementById('fx-snow');
+    const ctx = canvas.getContext('2d');
+    let DPR = Math.min(devicePixelRatio || 1, 2);
+    let W = 0, H = 0, particles = [], running = false;
+
+    function resize(){
+        W = canvas.width = innerWidth * DPR;
+        H = canvas.height = innerHeight * DPR;
+        canvas.style.width = innerWidth + 'px';
+        canvas.style.height = innerHeight + 'px';
+        // 初始化粒子数量（随屏幕面积变化）
+        const target = Math.min(110, Math.floor((innerWidth * innerHeight) / 18000));
+        particles = Array.from({length: target}, () => spawn());
+    }
+
+    function spawn(){
+        const r = Math.random()*1.8 + .6; // 0.6 - 2.4px
+        return {
+            x: Math.random()*W,
+            y: Math.random()*H,
+            r: r*DPR,
+            vy: (Math.random()*0.5 + 0.25) * DPR, // 垂直速度
+            vx: (Math.random()-.5)*0.15 * DPR,     // 轻微飘移
+            a: Math.random()*Math.PI*2,
+            swing: Math.random()*0.35 + 0.05
+        };
+    }
+
+    function tick(){
+        if(!running) return;
+        ctx.clearRect(0,0,W,H);
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = 'rgba(212, 233, 255, 0.65)';
+        for(const p of particles){
+            p.a += p.swing*0.02; // 横向轻摆
+            p.x += p.vx + Math.cos(p.a)*0.12*DPR;
+            p.y += p.vy;
+            if(p.y - p.r > H){ p.y = -p.r; p.x = Math.random()*W; }
+            if(p.x < -10) p.x = W+10; if(p.x>W+10) p.x = -10;
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+        }
+        requestAnimationFrame(tick);
+    }
+
+    function start(){ if(prefersReduced) return; running = true; resize(); tick(); }
+    function stop(){ running = false; }
+
+    window.addEventListener('resize', resize);
+    start();
+</script>
+</body>
+</html>
