@@ -1,0 +1,58 @@
+# =========================
+# OS 系统文件
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# PHPStorm / IntelliJ IDEA
+# =========================
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# =========================
+# Composer
+# =========================
+/vendor/
+composer.lock
+
+# =========================
+# Node.js（如果前端有构建工具）
+# =========================
+/node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# =========================
+# 环境配置文件
+# =========================
+.env
+.env.local
+.env.*.local
+
+# =========================
+# 缓存与日志
+# =========================
+/storage/*.key
+/storage/logs/
+bootstrap/cache/
+/cache/
+/tmp/
+
+# =========================
+# 测试与覆盖率
+# =========================
+/coverage/
+/phpunit.xml
+/phpunit.xml.dist
+/.phpunit.result.cache
+
+# =========================
+# 其他常见文件
+# =========================
+/public/storage
+/public/hot
+/.env.testing
+/.vscode/
